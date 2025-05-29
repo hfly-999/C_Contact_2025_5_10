@@ -2,9 +2,17 @@
 
 
 //-------------------------------------------------------------------------------------------//
+void InitContact(Contact* con)
+{
+	con->pos = 0;
+	con->Data = (PeopleInfo*)malloc(CAPACITY_SIZE * sizeof(PeopleInfo));
+	con->rate = 1;
+	if (con->Data == NULL)return;
+	con->capacity = CAPACITY_SIZE;//容量=默认容量
+}
 void DelContact(Contact* con)
 {
-	printf("请输入你要删除的元素的位置");
+	printf("请输入你要删除的元素的位置:\n");
 	int del = 0;
 	cin >> del;
 	if (del > con->pos || del < 1)
@@ -18,6 +26,16 @@ void DelContact(Contact* con)
 			*(con->Data + del) = *(con->Data + del + 1);
 		}
 		con->pos--;
+		if (con->capacity < ((con->rate-1) * CAPACITY_SIZE))//判断是否需要缩减部分空间
+		{
+			PeopleInfo* ptr = (PeopleInfo*)realloc(con->Data,sizeof(PeopleInfo)*(con->capacity-CAPACITY_SIZE));
+			if (ptr != NULL)//重新分配成功
+			{
+				con->Data = ptr;
+				con->capacity -= CAPACITY_SIZE;
+			}
+		}
+		cout << "删除成功\n";
 	}
 	
 }
@@ -55,8 +73,8 @@ void AddContact(Contact* con)
 	//判断模块
 	if (con->pos == con->capacity)//如果容量满了
 	{
-		static int rate = 1;//内存申请的倍率
-		PeopleInfo* ptr = (PeopleInfo*)realloc(con->Data, ++rate * CAPACITY_SIZE * sizeof(PeopleInfo));//重新开辟
+		con->rate++;//内存申请的倍率
+		PeopleInfo* ptr = (PeopleInfo*)realloc(con->Data, con->rate * CAPACITY_SIZE * sizeof(PeopleInfo));//重新开辟
 		if (ptr == NULL)//开辟失败
 		{
 			printf("内存空间已满,添加失败!!\n");
@@ -85,16 +103,10 @@ void AddContact(Contact* con)
 		con->pos++;
 		printf("添加成功!!\n");
 	//-------------------------------------------------------------------------------------------------//
-	
+}
 
-}
-void InitContact(Contact* con)
-{
-	con->pos = 0;
-	con->Data = (PeopleInfo*)malloc(CAPACITY_SIZE *sizeof(PeopleInfo));
-	if (con->Data == NULL)return;
-	con->capacity = CAPACITY_SIZE;//容量=默认容量
-}
+
+
 void FindContact(const Contact* con)
 {
 	cout << "请输入你要查找的人的名字";

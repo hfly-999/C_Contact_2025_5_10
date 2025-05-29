@@ -36,6 +36,7 @@ struct Contact
 	int pos;//记录元素个数
 	PeopleInfo *Data;
 	int capacity;//当前通讯录的最大容量
+	int rate;//内存申请的倍率
 };
 
 
